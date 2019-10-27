@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: dist_linux
-          path: target/release/gear
+          path: target/release/action-releases-test
   build_macos:
     name: Build macOS
     runs-on: macOS-latest
@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: dist_macos
-          path: target/release/gear
+          path: target/release/action-releases-test
   release:
     needs:
       - build_linux
@@ -80,7 +80,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist_macos
-          asset_name: gear-macos
+          asset_name: action-releases-test-macos
       - name: Upload Linux build
         uses: actions/upload-release-asset@master
         env:
@@ -88,4 +88,4 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist_linux
-          asset_name: gear-linux
+          asset_name: action-releases-test-linux
