@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: dist_windows
-          path: target/release/gear.exe
+          path: target/release/action-releases-test.exe
   release:
     needs:
       - build_linux
@@ -90,7 +90,7 @@ jobs:
           chmod +x ./dist_linux/action-releases-test
           zip --junk-paths action-releases-test-macos ./dist_macos/action-releases-test
           zip --junk-paths action-releases-test-linux ./dist_linux/action-releases-test
-          zip --junk-paths action-releases-test-windows ./dist_windows/action-releases-test
+          zip --junk-paths action-releases-test-windows ./dist_windows/action-releases-test.exe
       - name: Create Release
         id: create_release
         uses: actions/create-release@master
