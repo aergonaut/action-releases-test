@@ -63,6 +63,13 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: dist_linux
+      - name: Create release archives
+        run: |
+          set -ex
+          chmod +x ./dist_macos/action-releases-test
+          chmod +x ./dist_linux/action-releases-test
+          zip --junk-paths action-releases-test-macos ./dist_macos/action-releases-test
+          zip --junk-paths action-releases-test-linux ./dist_linux/action-releases-test
       - name: Create Release
         id: create_release
         uses: actions/create-release@master
@@ -79,15 +86,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist_macos/action-releases-test
-          asset_name: action-releases-test-macos
-          asset_content_type: application/octet-stream
+          asset_path: ./action-releases-test-macos.zip
+          asset_name: action-releases-test-macos.zip
+          asset_content_type: application/zip
       - name: Upload Linux build
         uses: actions/upload-release-asset@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist_linux/action-releases-test
-          asset_name: action-releases-test-linux
-          asset_content_type: application/octet-stream
+          asset_path: ./action-releases-test-linux.zip
+          asset_name: action-releases-test-linux.zip
+          asset_content_type: application/zip
