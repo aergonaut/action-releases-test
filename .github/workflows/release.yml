@@ -48,6 +48,22 @@ jobs:
         with:
           name: dist_macos
           path: target/release/action-releases-test
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo build --release --verbose
+        env:
+          RUSTFLAGS: -Ctarget-feature=+crt-static
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: dist_windows
+          path: target/release/gear.exe
   release:
     needs:
       - build_linux
@@ -63,6 +79,10 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: dist_linux
+      - name: Download Windows artifact
+        uses: actions/download-artifact@master
+        with:
+          name: dist_windows
       - name: Create release archives
         run: |
           set -ex
@@ -70,6 +90,7 @@ jobs:
           chmod +x ./dist_linux/action-releases-test
           zip --junk-paths action-releases-test-macos ./dist_macos/action-releases-test
           zip --junk-paths action-releases-test-linux ./dist_linux/action-releases-test
+          zip --junk-paths action-releases-test-windows ./dist_windows/action-releases-test
       - name: Create Release
         id: create_release
         uses: actions/create-release@master
@@ -97,4 +118,13 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./action-releases-test-linux.zip
           asset_name: action-releases-test-linux.zip
+          asset_content_type: application/zip
+      - name: Upload Windows build
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./action-releases-test-windows.zip
+          asset_name: action-releases-test-windows.zip
           asset_content_type: application/zip
